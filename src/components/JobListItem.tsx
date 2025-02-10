@@ -1,20 +1,14 @@
 import { Job } from "@prisma/client";
+import { formatMoney, formatDate, relativeDate } from "@/lib/utils";
 import Image from "next/image";
 import CompanyLogoPlaceholder from "@/assets/logo.png";
 import { Banknote, Briefcase, Clock, Globe2, MapPin } from "lucide-react";
-import { formatDistanceToNow } from "date-fns"; // For formatting the date
+import Badge from "./Badge";
 
+ 
 interface JobListItemProps {
   job: Job;
 }
-
-// Function to format salary
-const formatMoney = (amount: number) => `$${amount.toLocaleString()}`;
-
-// Function to format the "createdAt" date
-const formatDate = (date: Date) => {
-  return formatDistanceToNow(date, { addSuffix: true }); // e.g., "3 days ago"
-};
 
 export default async function JobListItem({
   job: {
@@ -64,9 +58,15 @@ export default async function JobListItem({
             <Clock size={16} className="shrink-0" />
             {formatDate(createdAt)}
           </p>
+          
         </div>
       </div>
-      <div className="hidden sm:flex flex-col shrink-0 items-end justify-between">
+      <div className="hidden shrink-0 flex-col items-end justify-between sm:flex">
+        <Badge>{type}</Badge>
+        <span className="flex items-center gap-1.5 text-muted-foreground">
+          <Clock size={16} />
+          {relativeDate(createdAt)}
+        </span>
         {/* Add any additional elements here (e.g., apply button) */}
       </div>
     </article>
