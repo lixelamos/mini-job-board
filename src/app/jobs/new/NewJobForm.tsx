@@ -7,14 +7,19 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
+    
   } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import Select from "@/components/ui/select";
 import { createJobSchema, CreateJobValues } from "@/lib/validation";
 import  {zodResolver} from "@hookform/resolvers/zod";
 import { jobTypes,locationTypes  } from "@/lib/job-types";
+import LoadingButton from "@/components/LoadingButton";
+import RichTextEditor from "@/components/RichTextEditor";
 import LocationInput from "@/components/LocationInput";
+import { draftToMarkdown } from "markdown-draft-js"; 
 import { X } from "lucide-react";
 
 
@@ -138,7 +143,15 @@ export default  function NewJobForm(){
                         <FormItem>
                             <FormLabel>Location</FormLabel>
                             <FormControl>
-                                <Select {...field} defaultValue="">
+                                <Select {...field} defaultValue=""
+                                    onChange={e=>{
+                                        field.onChange(e);
+                                        if (e.currentTarget.value !== "Remote") {
+                                            trigger("location")
+                                            
+                                        }
+                                    }}
+                                    >
                                     <option value="" hidden>
                                         Select an Option
                                     </option>
@@ -183,8 +196,87 @@ export default  function NewJobForm(){
                 </FormItem>
             )}
              />     
-
-
+                <div className="space-y-2">
+              <Label htmlFor="applicationEmail">How to apply</Label>
+              <div className="flex justify-between">
+                <FormField
+                  control={control}
+                  name="applicationEmail"
+                  render={({ field }) => (
+                    <FormItem className="grow">
+                      <FormControl>
+                        <div className="flex items-center">
+                          <Input
+                            id="applicationEmail"
+                            placeholder="Email"
+                            type="email"
+                            {...field}
+                          />
+                          <span className="mx-2">or</span>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={control}
+                  name="applicationUrl"
+                  render={({ field }) => (
+                    <FormItem className="grow">
+                      <FormControl>
+                        <Input
+                          placeholder="Website"
+                          type="url"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            trigger("applicationEmail");
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                    </div>
+                </div>
+                <FormField
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <Label onClick={() => setFocus("description")}>
+                    Description
+                  </Label>
+                  <FormControl>
+                    <RichTextEditor
+                      onChange={(draft) =>
+                        field.onChange(draftToMarkdown(draft))
+                      }
+                      ref={field.ref}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="salary"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Salary</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="number" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <LoadingButton type="submit" loading={isSubmitting}>
+              Submit
+            </LoadingButton>
 
             </form>
     </Form>

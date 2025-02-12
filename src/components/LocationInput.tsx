@@ -26,7 +26,7 @@ export default forwardRef<HTMLInputElement, LocationInputProps>(function Locatio
           searchWords.every((word) => city.toLowerCase().includes(word.toLowerCase()))
       )
       .slice(0, 5);
-  }, [locationSearchInput]); // ✅ Fix: Proper dependency array
+  }, [locationSearchInput]); // Fix: Proper dependency array
 
   return<div className="relative">
 
