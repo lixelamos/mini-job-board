@@ -1,9 +1,8 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { del } from "@vercel/blob";
 
 type FormState = { error?: string } | undefined;
 
@@ -48,6 +47,4 @@ export async function deleteJob(
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Unexpected error" };
   }
-
-  redirect("/admin");
 }

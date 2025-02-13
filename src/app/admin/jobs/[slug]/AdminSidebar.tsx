@@ -1,30 +1,21 @@
 "use client";
 
+import FormSubmitButton from "@/components/FormSubmitButton";
 import { Job } from "@prisma/client";
 import { useFormState } from "react-dom";
 import { approveSubmission, deleteJob } from "./actions";
-import Link from "next/link";
 
 interface AdminSidebarProps {
   job: Job;
 }
 
 export default function AdminSidebar({ job }: AdminSidebarProps) {
-  console.log("AdminSidebar is rendering for job:", job); // Debug log
-
   return (
-    <aside className="border p-4 bg-gray-100 rounded-md">
-      <nav className="mb-4 space-y-2">
-        <Link href="/candidate" className="block bg-blue-500 text-white p-2 rounded hover:bg-blue-600 text-center">
-          Candidate Jobs
-        </Link>
-        <Link href="/company" className="block bg-purple-500 text-white p-2 rounded hover:bg-purple-600 text-center">
-          Company Jobs
-        </Link>
-      </nav>
-
+    <aside className="flex w-[200px] flex-none flex-row items-center gap-2 md:flex-col md:items-stretch">
       {job.approved ? (
-        <span className="text-center font-semibold text-green-500">Approved</span>
+        <span className="text-center font-semibold text-green-500">
+          Approved
+        </span>
       ) : (
         <ApproveSubmissionButton jobId={job.id} />
       )}
@@ -41,12 +32,14 @@ function ApproveSubmissionButton({ jobId }: AdminButtonProps) {
   const [formState, formAction] = useFormState(approveSubmission, undefined);
 
   return (
-    <form action={formAction} className="mt-2">
-      <input type="hidden" name="jobId" value={jobId} />
-      <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+    <form action={formAction} className="space-y-1">
+      <input hidden name="jobId" value={jobId} />
+      <FormSubmitButton className="w-full bg-green-500 hover:bg-green-600">
         Approve
-      </button>
-      {formState?.error && <p className="text-sm text-red-500">{formState.error}</p>}
+      </FormSubmitButton>
+      {formState?.error && (
+        <p className="text-sm text-red-500">{formState.error}</p>
+      )}
     </form>
   );
 }
@@ -55,12 +48,14 @@ function DeleteJobButton({ jobId }: AdminButtonProps) {
   const [formState, formAction] = useFormState(deleteJob, undefined);
 
   return (
-    <form action={formAction} className="mt-2">
-      <input type="hidden" name="jobId" value={jobId} />
-      <button type="submit" className="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600">
+    <form action={formAction} className="space-y-1">
+      <input hidden name="jobId" value={jobId} />
+      <FormSubmitButton className="w-full bg-red-500 hover:bg-red-600">
         Delete
-      </button>
-      {formState?.error && <p className="text-sm text-red-500">{formState.error}</p>}
+      </FormSubmitButton>
+      {formState?.error && (
+        <p className="text-sm text-red-500">{formState.error}</p>
+      )}
     </form>
   );
 }

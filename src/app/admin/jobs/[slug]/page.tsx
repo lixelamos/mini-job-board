@@ -1,7 +1,8 @@
 import JobPage from "@/components/JobPage";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import AdminSidebar from "./AdminSideBar";
+import AdminSidebar from "./AdminSidebar";
+
 interface PageProps {
   params: { slug: string };
 }
