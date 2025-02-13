@@ -14,13 +14,12 @@ export default async function JobListItem({
   job: {
     title,
     companyName,
-    location,
-    description,
-    salary,
     type,
+    locationType,
+    location,
+    salary,
     companyLogoUrl,
     createdAt,
-    locationType,
   },
 }: JobListItemProps) {
   return (
