@@ -3,13 +3,10 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import AdminSidebar from "./AdminSidebar";
 
-// Define PageProps correctly
-interface PageProps {
-  params: { slug: string };
-}
+// Ensure Next.js correctly recognizes PageProps
+export default async function Page({ params }: { params: { slug: string } }) {
+  const { slug } = params;
 
-export default async function Page({ params }: PageProps) {
-  const { slug } = params; // Ensure proper destructuring
   const job = await prisma.job.findUnique({
     where: { slug },
   });
