@@ -31,13 +31,17 @@ interface JobFilterSidebarProps {
 export default async function JobFilterSidebar({
   defaultValues,
 }: JobFilterSidebarProps) {
-  const distinctLocations = (await prisma.job
+  interface Location {
+    location: string | null;
+  }
+
+  const distinctLocations: string[] = (await prisma.job
     .findMany({
       where: { approved: true },
       select: { location: true },
       distinct: ["location"],
     })
-    .then((locations) =>
+    .then((locations: Location[]) =>
       locations.map(({ location }) => location).filter(Boolean),
     )) as string[];
 
