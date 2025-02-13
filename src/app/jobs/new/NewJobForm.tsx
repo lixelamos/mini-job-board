@@ -19,11 +19,9 @@ import { jobTypes, locationTypes } from "@/lib/job-types";
 import { CreateJobValues, createJobSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
-import { draftToMarkdown } from "markdown-draft-js";
 import { useForm } from "react-hook-form";
 import { serialize } from "slate-md-serializer";
 import { createJobPosting } from "./actions";
-
 export default function NewJobForm() {
   const form = useForm<CreateJobValues>({
     resolver: zodResolver(createJobSchema),
@@ -42,6 +40,7 @@ export default function NewJobForm() {
   async function onSubmit(values: CreateJobValues) {
     const formData = new FormData();
 
+    // Append all form values to FormData
     Object.entries(values).forEach(([key, value]) => {
       if (value) {
         formData.append(key, value);
@@ -50,8 +49,10 @@ export default function NewJobForm() {
 
     try {
       await createJobPosting(formData);
+      toast.success("Job posting created successfully!");
     } catch (error) {
-      alert("Something went wrong, please try again.");
+      toast.error("Something went wrong. Please try again.");
+      console.error(error);
     }
   }
 
@@ -76,6 +77,7 @@ export default function NewJobForm() {
             noValidate
             onSubmit={handleSubmit(onSubmit)}
           >
+            {/* Job Title */}
             <FormField
               control={control}
               name="title"
@@ -89,6 +91,8 @@ export default function NewJobForm() {
                 </FormItem>
               )}
             />
+
+            {/* Job Type */}
             <FormField
               control={control}
               name="type"
@@ -111,6 +115,8 @@ export default function NewJobForm() {
                 </FormItem>
               )}
             />
+
+            {/* Company Info */}
             <FormField
               control={control}
               name="companyName"
@@ -124,6 +130,8 @@ export default function NewJobForm() {
                 </FormItem>
               )}
             />
+
+            {/* Company Logo */}
             <FormField
               control={control}
               name="companyLogo"
@@ -145,6 +153,8 @@ export default function NewJobForm() {
                 </FormItem>
               )}
             />
+
+            {/* Location Type */}
             <FormField
               control={control}
               name="locationType"
@@ -176,6 +186,8 @@ export default function NewJobForm() {
                 </FormItem>
               )}
             />
+
+            {/* Office Location */}
             <FormField
               control={control}
               name="location"
@@ -205,6 +217,8 @@ export default function NewJobForm() {
                 </FormItem>
               )}
             />
+
+            {/* How to Apply */}
             <div className="space-y-2">
               <Label htmlFor="applicationEmail">How to apply</Label>
               <div className="flex justify-between">
@@ -250,6 +264,8 @@ export default function NewJobForm() {
                 />
               </div>
             </div>
+
+            {/* Job Description */}
             <FormField
               control={control}
               name="description"
@@ -268,6 +284,8 @@ export default function NewJobForm() {
                 </FormItem>
               )}
             />
+
+            {/* Salary */}
             <FormField
               control={control}
               name="salary"
@@ -281,6 +299,8 @@ export default function NewJobForm() {
                 </FormItem>
               )}
             />
+
+            {/* Submit Button */}
             <LoadingButton type="submit" loading={isSubmitting}>
               Submit
             </LoadingButton>
