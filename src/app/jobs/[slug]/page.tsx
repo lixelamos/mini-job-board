@@ -5,40 +5,36 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
-// Define the PageProps interface
+// Define PageProps interface correctly
 interface PageProps {
-  params: { slug: string }; // `params` is required
+  params: { slug: string }; // Ensure params is correctly typed
 }
 
-// Cache the job fetching function to avoid redundant database calls
+// Cache the job fetching function to optimize performance
 const getJob = cache(async (slug: string) => {
-  const job = await prisma.job.findUnique({
+  return await prisma.job.findUnique({
     where: { slug },
   });
-
-  return job || null;
 });
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  // Fetch the job data asynchronously
   const job = await getJob(params.slug);
 
   if (!job) {
     return { title: "Job Not Found" };
   }
 
-  return { title: job.title }; // Set the page title to the job title
+  return { title: job.title }; // Set page title dynamically
 }
 
 // Define the Page component
 export default async function Page({ params }: PageProps) {
-  // Fetch the job data asynchronously
   const job = await getJob(params.slug);
 
   if (!job) {
     console.error(`Job with slug "${params.slug}" not found.`);
-    notFound();
+    return notFound();
   }
 
   const { applicationEmail, applicationUrl } = job;
@@ -46,12 +42,12 @@ export default async function Page({ params }: PageProps) {
 
   if (!applicationLink) {
     console.error("Job has no application link or email.");
-    notFound();
+    return notFound();
   }
 
   return (
     <main className="m-auto my-10 flex max-w-5xl flex-col items-center gap-5 px-3 md:flex-row md:items-start">
-      <JobPage job={job} /> {/* Render the JobPage component with job data */}
+      <JobPage job={job} /> {/* Pass job data to JobPage */}
       <aside>
         <Button asChild>
           <a href={applicationLink} className="w-40 md:w-fit">
