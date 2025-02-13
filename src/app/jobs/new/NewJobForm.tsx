@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { draftToMarkdown } from "markdown-draft-js";
 import { useForm } from "react-hook-form";
+import { serialize } from "slate-md-serializer";
 import { createJobPosting } from "./actions";
 
 export default function NewJobForm() {
@@ -259,9 +260,7 @@ export default function NewJobForm() {
                   </Label>
                   <FormControl>
                     <RichTextEditor
-                      onChange={(draft) =>
-                        field.onChange(draftToMarkdown(draft))
-                      }
+                      onChange={(content: any) => field.onChange(serialize(content))}
                       ref={field.ref}
                     />
                   </FormControl>
