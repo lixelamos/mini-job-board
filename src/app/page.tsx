@@ -1,12 +1,9 @@
 
 import JobFilterSidebar from "@/components/JobFilterSidebar";
-import JobListItem from "@/components/JobListItem";
-import prisma from "@/lib/prisma";
 import H1 from "@/components/ui/h1";
 import JobResults from "@/components/JobResults";
 import { JobFilterValues } from "@/lib/validation";
 import { Metadata } from "next";
-import { metadata } from "./layout";
 
 interface PageProps{
   searchParams:{

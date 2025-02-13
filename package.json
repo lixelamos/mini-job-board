@@ -34,6 +34,7 @@
     "slate": "^0.112.0",
     "slate-md-serializer": "^5.5.4",
     "slate-react": "^0.112.1",
+    "slate-serializers": "^2.2.3",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.1"
