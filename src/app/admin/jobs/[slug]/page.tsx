@@ -7,11 +7,9 @@ interface PageProps {
   params: { slug: string };
 }
 
-export default async function Page({ params }: PageProps) {
-  console.log("Params received:", params);
-
+export default async function Page({ params: { slug } }: PageProps) {
   const job = await prisma.job.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
   });
 
   if (!job) notFound();
