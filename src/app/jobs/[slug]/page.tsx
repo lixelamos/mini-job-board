@@ -5,49 +5,56 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
-// Define PageProps interface correctly
 interface PageProps {
-  params: { slug: string }; // Ensure params is correctly typed
+  params: { slug: string };
 }
 
-// Cache the job fetching function to optimize performance
 const getJob = cache(async (slug: string) => {
-  return await prisma.job.findUnique({
+  const job = await prisma.job.findUnique({
     where: { slug },
   });
+
+  if (!job) notFound();
+
+  return job;
 });
 
-// Generate metadata for the page
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const job = await getJob(params.slug);
+export async function generateStaticParams() {
+  const jobs = await prisma.job.findMany({
+    where: { approved: true },
+    select: { slug: true },
+  });
 
-  if (!job) {
-    return { title: "Job Not Found" };
-  }
-
-  return { title: job.title }; // Set page title dynamically
+  return jobs.map(({ slug }) => slug);
 }
 
-// Define the Page component
-export default async function Page({ params }: PageProps) {
-  const job = await getJob(params.slug);
+export async function generateMetadata({
+  params: { slug },
+}: PageProps): Promise<Metadata> {
+  const job = await getJob(slug);
 
-  if (!job) {
-    console.error(`Job with slug "${params.slug}" not found.`);
-    return notFound();
-  }
+  return {
+    title: job.title,
+  };
+}
+
+export default async function Page({ params: { slug } }: PageProps) {
+  const job = await getJob(slug);
 
   const { applicationEmail, applicationUrl } = job;
-  const applicationLink = applicationEmail ? `mailto:${applicationEmail}` : applicationUrl;
+
+  const applicationLink = applicationEmail
+    ? `mailto:${applicationEmail}`
+    : applicationUrl;
 
   if (!applicationLink) {
-    console.error("Job has no application link or email.");
-    return notFound();
+    console.error("Job has no application link or email");
+    notFound();
   }
 
   return (
     <main className="m-auto my-10 flex max-w-5xl flex-col items-center gap-5 px-3 md:flex-row md:items-start">
-      <JobPage job={job} /> {/* Pass job data to JobPage */}
+      <JobPage job={job} />
       <aside>
         <Button asChild>
           <a href={applicationLink} className="w-40 md:w-fit">

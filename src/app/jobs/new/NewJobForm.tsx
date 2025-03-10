@@ -19,6 +19,7 @@ import { jobTypes, locationTypes } from "@/lib/job-types";
 import { CreateJobValues, createJobSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
+import { draftToMarkdown } from "markdown-draft-js";
 import { useForm } from "react-hook-form";
 import { createJobPosting } from "./actions";
 
@@ -40,15 +41,15 @@ export default function NewJobForm() {
   async function onSubmit(values: CreateJobValues) {
     const formData = new FormData();
 
-    Object.entries(values).forEach(([key, val]) => {
-      if (val) {
-        formData.append(key, val as string | Blob); // Explicit type assertion
+    Object.entries(values).forEach(([key, value]) => {
+      if (value) {
+        formData.append(key, value);
       }
     });
 
     try {
       await createJobPosting(formData);
-    } catch {
+    } catch (error) {
       alert("Something went wrong, please try again.");
     }
   }
@@ -125,16 +126,17 @@ export default function NewJobForm() {
             <FormField
               control={control}
               name="companyLogo"
-              render={({ field }) => (
+              render={({ field: { value, ...fieldValues } }) => (
                 <FormItem>
                   <FormLabel>Company logo</FormLabel>
                   <FormControl>
                     <Input
+                      {...fieldValues}
                       type="file"
                       accept="image/*"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-                        field.onChange(file);
+                        fieldValues.onChange(file);
                       }}
                     />
                   </FormControl>
@@ -257,8 +259,8 @@ export default function NewJobForm() {
                   </Label>
                   <FormControl>
                     <RichTextEditor
-                      onChange={(content) =>
-                        field.onChange(JSON.stringify(content))
+                      onChange={(draft) =>
+                        field.onChange(draftToMarkdown(draft))
                       }
                       ref={field.ref}
                     />

@@ -1,22 +1,39 @@
 "use client";
 
-import { Slate, Editable, withReact } from "slate-react";
-import { createEditor, Descendant } from "slate";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
+import { forwardRef } from "react";
+import { EditorProps } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-export default function RichTextEditor({ className }: { className?: string }) {
-  const [editor] = useState(() => withReact(createEditor()));
+const Editor = dynamic(
+  () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
+  { ssr: false },
+);
 
-  return (
-    <div className={cn("border rounded-md p-3 min-h-[150px]", className)}>
-      <Slate editor={editor} initialValue={[{ children: [{ text: "" }] } as Descendant]}>
-        <Editable
-          className="focus:outline-none"
-          placeholder="Write something..."
-          renderLeaf={({ attributes, children }) => <span {...attributes}>{children}</span>}
-        />
-      </Slate>
-    </div>
-  );
-}
+export default forwardRef<Object, EditorProps>(
+  function RichTextEditor(props, ref) {
+    return (
+      <Editor
+        editorClassName={cn(
+          "border rounded-md px-3 min-h-[150px] cursor-text ring-offset-background focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+          props.editorClassName,
+        )}
+        toolbar={{
+          options: ["inline", "list", "link", "history"],
+          inline: {
+            options: ["bold", "italic", "underline"],
+          },
+        }}
+        editorRef={(r) => {
+          if (typeof ref === "function") {
+            ref(r);
+          } else if (ref) {
+            ref.current = r;
+          }
+        }}
+        {...props}
+      />
+    );
+  },
+);

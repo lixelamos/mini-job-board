@@ -1,57 +1,55 @@
-
 import JobFilterSidebar from "@/components/JobFilterSidebar";
-import H1 from "@/components/ui/h1";
 import JobResults from "@/components/JobResults";
+import H1 from "@/components/ui/h1";
 import { JobFilterValues } from "@/lib/validation";
 import { Metadata } from "next";
 
-interface PageProps{
-  searchParams:{
-    q?:string;
-    type?:string;
-    location?:string;
-    remote?:string;
+interface PageProps {
+  searchParams: {
+    q?: string;
+    type?: string;
+    location?: string;
+    remote?: string;
+    page?: string;
   };
 }
 
-function getTitle({q,type,location,remote}:JobFilterValues){
-  const titlePrefix=q
-  ?`${q} jobs`
-  :type
-  ?`${type} developer Jobs for You`
-  :remote
-  ?"Remote Developer Jobs for You"
-  :"All Developer Jobs for You";
-  
-  const titleSuffix=location? `in ${location}`: "";
-  return `${titlePrefix} ${titleSuffix}`
-  }
+function getTitle({ q, type, location, remote }: JobFilterValues) {
+  const titlePrefix = q
+    ? `${q} jobs`
+    : type
+      ? `${type} developer jobs`
+      : remote
+        ? "Remote developer jobs"
+        : "All developer jobs";
 
-  export function generateMetadata({ searchParams }: PageProps): Metadata {
-    const { q, type, location, remote } = searchParams; // Access properties inside the function
-  
-    return {
-      title: `${getTitle({
-        q,
-        type,
-        location,
-        remote: remote === "true",
-      })} | Job Finder`,
-    };
-  }
-  
+  const titleSuffix = location ? ` in ${location}` : "";
 
-  export default async function Home({
-     searchParams }
-     : PageProps) {
-    const { q, type, location, remote } = await searchParams; // Await searchParams  
+  return `${titlePrefix}${titleSuffix}`;
+}
+
+export function generateMetadata({
+  searchParams: { q, type, location, remote },
+}: PageProps): Metadata {
+  return {
+    title: `${getTitle({
+      q,
+      type,
+      location,
+      remote: remote === "true",
+    })} | Flow Jobs`,
+  };
+}
+
+export default async function Home({
+  searchParams: { q, type, location, remote, page },
+}: PageProps) {
   const filterValues: JobFilterValues = {
     q,
     type,
     location,
-    remote: String(remote) === "true",
+    remote: remote === "true",
   };
-
 
   return (
     <main className="m-auto my-10 max-w-5xl space-y-10 px-3">
@@ -61,10 +59,11 @@ function getTitle({q,type,location,remote}:JobFilterValues){
       </div>
       <section className="flex flex-col gap-4 md:flex-row">
         <JobFilterSidebar defaultValues={filterValues} />
-        <JobResults filterValues={filterValues}/>
-      
-  </section> 
-
-  </main>
+        <JobResults
+          filterValues={filterValues}
+          page={page ? parseInt(page) : undefined}
+        />
+      </section>
+    </main>
   );
 }
