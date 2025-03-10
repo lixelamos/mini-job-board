@@ -6,7 +6,7 @@ import AdminSidebar from "./AdminSidebar";
 interface PageProps {
   params: { slug: string };
 }
-export default async function Page({ params }: PageProps) { // ✅ Use the correct type
+export default async function Page({ params }: Readonly<PageProps>) { // ✅ Use the correct type
   console.log("Params received:", params);
 
   const job = await prisma.job.findUnique({
